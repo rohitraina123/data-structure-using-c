@@ -1,0 +1,64 @@
+#include<stdio.h>
+#include<stdlib.h>
+#define SIZE 10
+int stack[10];
+int top=-1;
+
+int isempty(){
+    return (top == -1) ? 1 : 0;
+}
+
+int isfull(){
+    return (top == SIZE - 1) ? 1 : 0;
+}
+
+void push(){
+    int item;
+    if (isfull()){
+        printf("Stack overflow !!!\n");
+        exit(0);
+    }
+    else{
+        printf("Enter value you want to push to stack: ");
+        scanf("%d", &item);
+        top = top + 1;
+        stack[top] = item;
+    }
+}
+
+int pop(){
+    int val;
+    if(isempty()){
+        printf("Stack underflow !!!\n");
+        exit(0);
+    }
+    else{
+        val = stack[top];
+        top = top - 1;
+        printf("Value %d is removed from the stack\n", val);
+    }
+}
+
+void show(){
+    if(isempty()){
+        printf("Stack is empty\n");
+    }
+    else{
+        int i;
+        printf("Elements in the stack:\n");
+        for(i = top; i >= 0; i--){
+            printf("%d\n", stack[i]);
+        }
+    }
+}
+
+int main(){
+    push();
+    push();
+    push();
+    show();
+    pop();
+    printf("\n");
+    show();
+    return 0;
+}

@@ -1,0 +1,145 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+// Define the structure of a node
+struct Node {
+    int data;
+    struct Node* next;
+};
+
+// Function to create a new node
+struct Node* createNode(int data) {
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    if (newNode == NULL) {
+        printf("Memory allocation failed\n");
+        exit(1);
+    }
+    newNode->data = data;
+    newNode->next = NULL;
+    return newNode;
+}
+
+// Function to insert a node at the beginning of the circular linked list
+void insertAtBeginning(struct Node** head, int data) {
+    struct Node* newNode = createNode(data);
+    if (*head == NULL) {
+        newNode->next = newNode; // Circular reference to itself
+        *head = newNode;
+    } else {
+        struct Node* last = *head;
+        while (last->next != *head) {
+            last = last->next;
+        }
+        newNode->next = *head;
+        last->next = newNode;
+        *head = newNode;
+    }
+}
+
+// Function to insert a node at the end of the circular linked list
+void insertAtEnd(struct Node** head, int data) {
+    struct Node* newNode = createNode(data);
+    if (*head == NULL) {
+        newNode->next = newNode; // Circular reference to itself
+        *head = newNode;
+    } else {
+        struct Node* last = *head;
+        while (last->next != *head) {
+            last = last->next;
+        }
+        newNode->next = *head;
+        last->next = newNode;
+    }
+}
+
+// Function to delete a node with given key
+void deleteNode(struct Node** head, int key) {
+    if (*head == NULL) {
+        printf("Empty list\n");
+        return;
+    }
+    struct Node *temp = *head, *prev = NULL;
+    while (temp->data != key) {
+        if (temp->next == *head) {
+            printf("Node with key %d not found\n", key);
+            return;
+        }
+        prev = temp;
+        temp = temp->next;
+    }
+    if (temp == *head) {
+        prev = *head;
+        while (prev->next != *head) {
+            prev = prev->next;
+        }
+        if (*head == (*head)->next) {
+            *head = NULL;
+        } else {
+            prev->next = (*head)->next;
+            *head = (*head)->next;
+        }
+    } else if (temp->next == *head) {
+        prev->next = *head;
+    } else {
+        prev->next = temp->next;
+    }
+    free(temp);
+}
+
+// Function to search for a node with given key
+int search(struct Node* head, int key) {
+    struct Node* current = head;
+    if (head == NULL) {
+        printf("Empty list\n");
+        return 0;
+    }
+    do {
+        if (current->data == key) {
+            return 1; // Found
+        }
+        current = current->next;
+    } while (current != head);
+    return 0; // Not found
+}
+
+// Function to display the circular linked list
+void display(struct Node* head) {
+    struct Node* current = head;
+    if (head == NULL) {
+        printf("Empty list\n");
+        return;
+    }
+    do {
+        printf("%d -> ", current->data);
+        current = current->next;
+    } while (current != head);
+    printf("(head)\n");
+}
+
+// Main function
+int main() {
+    struct Node* head = NULL;
+
+    // Insertion
+    insertAtBeginning(&head, 3);
+    insertAtBeginning(&head, 2);
+    insertAtEnd(&head, 4);
+    insertAtEnd(&head, 5);
+
+    // Displaying the circular linked list
+    printf("Circular Linked List: ");
+    display(head); // Output: 2 -> 3 -> 4 -> 5 -> (head)
+
+   
+    deleteNode(&head, 4);
+
+    
+    printf("After deletion: ");
+    display(head); // Output: 2 -> 3 -> 5 -> (head)
+
+    
+    printf("Search for 3: %s\n", search(head, 3) ? "Found" : "Not found"); // Output: Found
+    printf("Search for 6: %s\n", search(head, 6) ? "Found" : "Not found"); // Output: Not found
+
+    return 0;
+}
